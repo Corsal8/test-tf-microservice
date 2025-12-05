@@ -21,20 +21,20 @@ services:
     networks:
       - local-dev-net
 
-  # One-off service to initialize the DynamoDB table
-  db-init:
-    image: amazon/aws-cli:latest
-    depends_on:
-      - dynamodb-local
-    volumes:
-      - ./init-db.sh:/app/init-db.sh
-    command: "sh /app/init-db.sh"
-    environment:
-      - AWS_ACCESS_KEY_ID=dummy
-      - AWS_SECRET_ACCESS_KEY=dummy
-      - AWS_DEFAULT_REGION=us-east-1
-    networks:
-      - local-dev-net
+  # # One-off service to initialize the DynamoDB table
+  # db-init:
+  #   image: amazon/aws-cli:latest
+  #   depends_on:
+  #     - dynamodb-local
+  #   volumes:
+  #     - ./init-db.sh:/app/init-db.sh
+  #   command: "sh /app/init-db.sh"
+  #   environment:
+  #     - AWS_ACCESS_KEY_ID=dummy
+  #     - AWS_SECRET_ACCESS_KEY=dummy
+  #     - AWS_DEFAULT_REGION=us-east-1
+  #   networks:
+  #     - local-dev-net
 
 networks:
   local-dev-net:

@@ -8,7 +8,7 @@ Globals:
     Timeout: 3
 
 Resources:
-  ServerlessRestApi:
+  MicroserviceApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
@@ -22,9 +22,9 @@ Resources:
   AuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/lambdas/authorizer/
-      Handler: index.handler
-      Runtime: nodejs20.x
+      CodeUri: .
+      Handler: src/lambdas/authorizer/index.handler
+      Runtime: nodejs22.x
       Architectures:
         - x86_64
     Metadata:
@@ -34,21 +34,21 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints:
-          - index.ts
+          - src/lambdas/authorizer/index.ts
 
   ServerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/lambdas/server/
-      Handler: index.handler
-      Runtime: nodejs20.x
+      CodeUri: .
+      Handler: src/lambdas/server/index.handler
+      Runtime: nodejs22.x
       Architectures:
         - x86_64
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            RestApiId: !Ref ServerlessRestApi
+            RestApiId: !Ref MicroserviceApiGateway
             Path: /
             Method: ANY
             Auth:
@@ -60,9 +60,9 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints:
-          - index.ts
+          - src/lambdas/server/index.ts
 
 Outputs:
   ApiUrl:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: !Sub "https://${MicroserviceApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

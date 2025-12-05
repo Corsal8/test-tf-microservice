@@ -50,7 +50,7 @@ Once the build is complete, you can start the local API:
 sam local start-api --docker-network test-terraform-microservice_local-dev-net
 ```
 
-**Note:** The `--docker-network` flag is crucial. It connects the SAM containers (running the Lambda functions) to the same Docker network as the databases, allowing them to communicate. The network name may vary, you can check it with `docker network ls`.
+**Note:** The `--docker-network` flag is crucial. It connects the SAM containers (running the Lambda functions) to the same Docker network as the databases, allowing them to communicate. The network name is based on the project directory. If you have issues, you can find the exact name by running `docker network ls`.
 
 Your API will be available at `http://127.0.0.1:3000`.
 

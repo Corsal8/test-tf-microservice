@@ -4,7 +4,14 @@
   "description": "This project realize a microservice with the following infrastructure.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:up": "docker compose -f local-dev/docker-compose.yml up -d",
+    "docker:down": "docker compose -f local-dev/docker-compose.yml down",
+    "sam:build": "sam build",
+    "sam:local:start": "sam local start-api --docker-network local-dev_local-dev-net",
+    "build:watch": "nodemon --watch src/ --ext ts --exec \"npm run sam:build\"",
+    "local:start": "npm run docker:up && npm run sam:build && npm run sam:local:start",
+    "local:start:watch": "concurrently \"npm run local:start\" \"npm run build:watch\""
   },
   "keywords": [],
   "author": "",
@@ -12,7 +19,9 @@
   "devDependencies": {
     "@prisma/config": "^7.1.0",
     "@types/aws-lambda": "^8.10.159",
+    "concurrently": "^9.2.1",
     "dotenv": "^17.2.3",
+    "nodemon": "^3.1.11",
     "prisma": "^7.1.0",
     "typescript": "^5.9.3"
   },

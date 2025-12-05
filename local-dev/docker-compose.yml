@@ -6,20 +6,47 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=yourStrong(!)Password
+      - SA_PASSWORD=Password1234
     ports:
       - "1433:1433"
     networks:
       - local-dev-net
+    volumes:
+      - sql-server-data:/var/opt/mssql
 
   # DynamoDB Local for the "Config DB"
   dynamodb-local:
     image: amazon/dynamodb-local:latest
-    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb"
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data
     ports:
       - "8000:8000"
+    volumes:
+      - "../.docker/dynamodb:/home/dynamodblocal/data"
     networks:
       - local-dev-net
+
+  # Web UI for SQL Server
+  adminer:
+    image: adminer
+    ports:
+      - "9000:8080"
+    networks:
+      - local-dev-net
+
+  # Web UI for DynamoDB
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    ports:
+      - "9001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+      - AWS_REGION=eu-west-3
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+    networks:
+      - local-dev-net
+    depends_on:
+      - dynamodb-local
 
   # # One-off service to initialize the DynamoDB table
   # db-init:
@@ -32,10 +59,13 @@ services:
   #   environment:
   #     - AWS_ACCESS_KEY_ID=dummy
   #     - AWS_SECRET_ACCESS_KEY=dummy
-  #     - AWS_DEFAULT_REGION=us-east-1
+  #     - AWS_DEFAULT_REGION=eu-west-3
   #   networks:
   #     - local-dev-net
 
 networks:
   local-dev-net:
     driver: bridge
+
+volumes:
+  sql-server-data:

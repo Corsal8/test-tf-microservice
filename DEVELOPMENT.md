@@ -21,6 +21,7 @@ docker-compose -f local-dev/docker-compose.yml up -d
 ```
 
 This will start the containers in the background. The following services will be available:
+
 - **SQL Server:** on `localhost:1433`
 - **DynamoDB Local:** on `localhost:8000`
 
@@ -61,7 +62,7 @@ Your API will be available at `http://127.0.0.1:3000`.
 - **Host:** `localhost`
 - **Port:** `1433`
 - **User:** `sa`
-- **Password:** `yourStrong(!)Password`
+- **Password:** `Password1234`
 - **Database:** `master`
 
 You can use any SQL client (like DBeaver, Azure Data Studio, etc.) to connect to this database.

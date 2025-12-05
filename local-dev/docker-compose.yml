@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  # SQL Server for the "Codes DB"
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=yourStrong(!)Password
+    ports:
+      - "1433:1433"
+    networks:
+      - local-dev-net
+
+  # DynamoDB Local for the "Config DB"
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb"
+    ports:
+      - "8000:8000"
+    networks:
+      - local-dev-net
+
+  # One-off service to initialize the DynamoDB table
+  db-init:
+    image: amazon/aws-cli:latest
+    depends_on:
+      - dynamodb-local
+    volumes:
+      - ./init-db.sh:/app/init-db.sh
+    command: "sh /app/init-db.sh"
+    environment:
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - AWS_DEFAULT_REGION=us-east-1
+    networks:
+      - local-dev-net
+
+networks:
+  local-dev-net:
+    driver: bridge

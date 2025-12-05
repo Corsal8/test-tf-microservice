@@ -1,0 +1,24 @@
+{
+  "name": "test-terraform-microservice",
+  "version": "1.0.0",
+  "description": "This project realize a microservice with the following infrastructure.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@prisma/config": "^7.1.0",
+    "@types/aws-lambda": "^8.10.159",
+    "dotenv": "^17.2.3",
+    "esbuild": "^0.27.1",
+    "prisma": "^7.1.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.943.0",
+    "@prisma/client": "^7.1.0"
+  }
+}

@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "authorizer_lambda" {
-  function_name = "authorizer-lambda"
+  function_name = "authorizer-lambda-${var.environment}"
   role          = aws_iam_role.lambda_exec_role.arn
 
   s3_bucket         = var.lambda_artifacts_bucket_name
@@ -8,10 +8,16 @@ resource "aws_lambda_function" "authorizer_lambda" {
 
   handler = "index.handler"
   runtime = "nodejs20.x"
+
+  environment {
+    variables = {
+      ENVIRONMENT = var.environment
+    }
+  }
 }
 
 resource "aws_lambda_function" "server_lambda" {
-  function_name = "server-lambda"
+  function_name = "server-lambda-${var.environment}"
   role          = aws_iam_role.lambda_exec_role.arn
 
   s3_bucket         = var.lambda_artifacts_bucket_name
@@ -20,4 +26,10 @@ resource "aws_lambda_function" "server_lambda" {
 
   handler = "index.handler"
   runtime = "nodejs20.x"
+
+  environment {
+    variables = {
+      ENVIRONMENT = var.environment
+    }
+  }
 }

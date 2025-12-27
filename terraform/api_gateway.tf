@@ -1,10 +1,10 @@
 resource "aws_api_gateway_rest_api" "api" {
-  name        = "Serverless-API"
+  name        = "Serverless-API-${var.environment}"
   description = "Terraform microservice API"
 }
 
 resource "aws_api_gateway_authorizer" "lambda_authorizer" {
-  name                   = "lambda_authorizer"
+  name                   = "lambda_authorizer-${var.environment}"
   rest_api_id            = aws_api_gateway_rest_api.api.id
   authorizer_uri         = aws_lambda_function.authorizer_lambda.invoke_arn
   authorizer_credentials = aws_iam_role.api_gateway_authorizer_role.arn
@@ -13,7 +13,7 @@ resource "aws_api_gateway_authorizer" "lambda_authorizer" {
 }
 
 resource "aws_iam_role" "api_gateway_authorizer_role" {
-  name = "api_gateway_authorizer_role"
+  name = "api_gateway_authorizer_role-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version   = "2012-10-17"
@@ -30,7 +30,7 @@ resource "aws_iam_role" "api_gateway_authorizer_role" {
 }
 
 resource "aws_iam_role_policy" "api_gateway_authorizer_policy" {
-  name = "api_gateway_authorizer_policy"
+  name = "api_gateway_authorizer_policy-${var.environment}"
   role = aws_iam_role.api_gateway_authorizer_role.id
 
   policy = jsonencode({
@@ -104,5 +104,5 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = "Prod"
+  stage_name    = var.environment
 }

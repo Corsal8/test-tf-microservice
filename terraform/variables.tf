@@ -4,6 +4,11 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "environment" {
+  description = "The deployment environment (e.g., develop, staging, production)."
+  type        = string
+}
+
 variable "lambda_artifacts_bucket_name" {
   description = "The name of the S3 bucket where the Lambda artifacts are stored."
   type        = string

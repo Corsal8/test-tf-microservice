@@ -1,11 +1,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  Terraform microservice
+Description: Terraform microservice
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 29
 
 Resources:
   MicroserviceApiGateway:

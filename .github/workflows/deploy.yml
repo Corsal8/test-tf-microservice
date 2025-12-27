@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - staging
+      - develop
 
 jobs:
   build-and-package:
@@ -81,6 +83,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Determine environment
+        id: get_env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          else
+            echo "environment=develop" >> $GITHUB_OUTPUT
+          fi
+
       - name: Terraform Init
         id: init
         run: terraform init
@@ -90,6 +103,7 @@ jobs:
         id: apply
         run: |
           terraform apply -auto-approve \
+            -var-file="environments/${{ steps.get_env.outputs.environment }}.tfvars" \
             -var="lambda_artifacts_bucket_name=${{ secrets.AWS_S3_BUCKET }}" \
             -var="authorizer_lambda_artifact_s3_key=${{ needs.build-and-package.outputs.authorizer_lambda_artifact_s3_key }}" \
             -var="server_lambda_artifact_s3_key=${{ needs.build-and-package.outputs.server_lambda_artifact_s3_key }}" \

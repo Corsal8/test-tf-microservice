@@ -24,12 +24,12 @@
     "dotenv": "^17.2.3",
     "nodemon": "^3.1.11",
     "prisma": "^7.1.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "esbuild": "^0.27.1"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.943.0",
     "@prisma/client": "^7.1.0",
-    "axios": "^1.13.2",
-    "esbuild": "^0.27.1"
+    "axios": "^1.13.2"
   }
 }

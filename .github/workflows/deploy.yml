@@ -8,14 +8,8 @@ on:
       - develop
 
 jobs:
-  build-and-package:
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      authorizer_lambda_artifact_s3_key: ${{ steps.zip_artifacts.outputs.authorizer_lambda_artifact_s3_key }}
-      server_lambda_artifact_s3_key: ${{ steps.zip_artifacts.outputs.server_lambda_artifact_s3_key }}
-      authorizer_lambda_artifact_hash: ${{ steps.calculate_hashes.outputs.authorizer_lambda_artifact_hash }}
-      server_lambda_artifact_hash: ${{ steps.calculate_hashes.outputs.server_lambda_artifact_hash }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -30,51 +24,6 @@ jobs:
 
       - name: Compile typescript
         run: npm run build
-
-      - name: Set up SAM CLI
-        uses: aws-actions/setup-sam@v2
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Build Lambda artifacts
-        run: sam build
-
-      - name: Zip artifacts
-        id: zip_artifacts
-        run: |
-          AUTHORIZER_ZIP="authorizer-lambda.zip"
-          SERVER_ZIP="server-lambda.zip"
-          cd .aws-sam/build/AuthorizerFunction && zip -r ../../../$AUTHORIZER_ZIP .
-          cd ../../../
-          cd .aws-sam/build/ServerFunction && zip -r ../../../$SERVER_ZIP .
-          cd ../../../
-          echo "authorizer_lambda_artifact_s3_key=$AUTHORIZER_ZIP" >> $GITHUB_OUTPUT
-          echo "server_lambda_artifact_s3_key=$SERVER_ZIP" >> $GITHUB_OUTPUT
-
-      - name: Upload artifacts to S3
-        run: |
-          aws s3 cp authorizer-lambda.zip s3://${{ secrets.AWS_S3_BUCKET }}/authorizer-lambda.zip
-          aws s3 cp server-lambda.zip s3://${{ secrets.AWS_S3_BUCKET }}/server-lambda.zip
-
-      - name: Calculate hashes
-        id: calculate_hashes
-        run: |
-          AUTHORIZER_HASH=$(sha256sum authorizer-lambda.zip | awk '{print $1}' | xxd -r -p | base64)
-          SERVER_HASH=$(sha256sum server-lambda.zip | awk '{print $1}' | xxd -r -p | base64)
-          echo "authorizer_lambda_artifact_hash=$AUTHORIZER_HASH" >> $GITHUB_OUTPUT
-          echo "server_lambda_artifact_hash=$SERVER_HASH" >> $GITHUB_OUTPUT
-
-  deploy:
-    needs: build-and-package
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -106,10 +55,5 @@ jobs:
         id: apply
         run: |
           terraform apply -auto-approve \
-            -var-file="environments/${{ steps.get_env.outputs.environment }}.tfvars" \
-            -var="lambda_artifacts_bucket_name=${{ secrets.AWS_S3_BUCKET }}" \
-            -var="authorizer_lambda_artifact_s3_key=${{ needs.build-and-package.outputs.authorizer_lambda_artifact_s3_key }}" \
-            -var="server_lambda_artifact_s3_key=${{ needs.build-and-package.outputs.server_lambda_artifact_s3_key }}" \
-            -var="authorizer_lambda_artifact_hash=${{ needs.build-and-package.outputs.authorizer_lambda_artifact_hash }}" \
-            -var="server_lambda_artifact_hash=${{ needs.build-and-package.outputs.server_lambda_artifact_hash }}"
+            -var-file="environments/${{ steps.get_env.outputs.environment }}.tfvars"
         working-directory: ./terraform

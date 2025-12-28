@@ -6,13 +6,13 @@ export const handler = async (
 ): Promise<APIGatewayProxyResult> => {
   console.log("EVENT", JSON.stringify(event));
 
-  const todo = await axios.get("https://jsonplaceholder.typicode.com/todos/2");
+  const todo = await axios.get("https://jsonplaceholder.typicode.com/todos/1");
   console.log("TODO", todo.data);
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: "Hello from Server!!",
+      message: "Hello from Fn1",
       todo: todo.data,
     }),
   };

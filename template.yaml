@@ -21,25 +21,17 @@ Resources:
   AuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/lambdas/authorizer/index.handler
+      CodeUri: ./dist
+      Handler: lambdas/authorizer/index.handler
       Runtime: nodejs22.x
       Architectures:
         - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2020"
-        Sourcemap: true
-        EntryPoints:
-          - src/lambdas/authorizer/index.ts
 
   ServerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/lambdas/server/index.handler
+      CodeUri: ./dist
+      Handler: lambdas/server/index.handler
       Runtime: nodejs22.x
       Architectures:
         - x86_64
@@ -52,14 +44,6 @@ Resources:
             Method: ANY
             Auth:
               Authorizer: MyLambdaTokenAuthorizer
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2020"
-        Sourcemap: true
-        EntryPoints:
-          - src/lambdas/server/index.ts
 
 Outputs:
   ApiUrl:

@@ -16,11 +16,11 @@ resource "aws_iam_role" "api_gateway_authorizer_role" {
   name = "api_gateway_authorizer_role-${var.environment}"
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
-        Action    = "sts:AssumeRole"
-        Effect    = "Allow"
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
         Principal = {
           Service = "apigateway.amazonaws.com"
         }
@@ -34,12 +34,12 @@ resource "aws_iam_role_policy" "api_gateway_authorizer_policy" {
   role = aws_iam_role.api_gateway_authorizer_role.id
 
   policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
-        Action    = "lambda:InvokeFunction"
-        Effect    = "Allow"
-        Resource  = aws_lambda_function.authorizer_lambda.arn
+        Action   = "lambda:InvokeFunction"
+        Effect   = "Allow"
+        Resource = aws_lambda_function.authorizer_lambda.arn
       }
     ]
   })

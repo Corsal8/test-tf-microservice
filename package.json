@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && cp package.json package-lock.json dist/ && cd dist && npm install --omit=dev",
     "docker:up": "docker compose -f local-dev/docker-compose.yml up -d",
     "docker:down": "docker compose -f local-dev/docker-compose.yml down",
-    "sam:build": "sam build",
     "sam:local:start": "sam local start-api --docker-network local-dev_local-dev-net",
-    "build:watch": "nodemon --watch src/ --ext ts --exec \"npm run sam:build\"",
-    "local:start": "npm run docker:up && npm run sam:build && npm run sam:local:start",
+    "build:watch": "nodemon --watch src/ --ext ts --exec \"npm run build\"",
+    "local:start": "npm run docker:up && npm run build && npm run sam:local:start",
     "local:start:watch": "concurrently \"npm run local:start\" \"npm run build:watch\""
   },
   "keywords": [],
@@ -28,6 +29,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.943.0",
     "@prisma/client": "^7.1.0",
+    "axios": "^1.13.2",
     "esbuild": "^0.27.1"
   }
 }

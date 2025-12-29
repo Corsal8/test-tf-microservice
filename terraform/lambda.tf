@@ -1,9 +1,12 @@
+# Lambda Package Archive
+# Similarly to Serverless Framework, we package all Lambda functions into a single ZIP file.
 data "archive_file" "lambda_package_zip" {
   type        = "zip"
   source_dir  = "../dist"
   output_path = "${path.module}/lambda-packages/lambda-package.zip"
 }
 
+# Authorizer Lambda
 resource "aws_lambda_function" "authorizer_lambda" {
   function_name = "authorizer-lambda-${var.environment}"
   role          = aws_iam_role.lambda_exec_role.arn
@@ -22,15 +25,18 @@ resource "aws_lambda_function" "authorizer_lambda" {
   }
 }
 
-resource "aws_lambda_function" "fn_lambda" {
-  function_name = "fn-lambda-${var.environment}"
+# Endpoint Lambdas
+resource "aws_lambda_function" "lambdas" {
+  for_each = local.endpoints
+
+  function_name = "${each.key}-lambda-${var.environment}"
   role          = aws_iam_role.lambda_exec_role.arn
 
   s3_bucket         = aws_s3_bucket.lambda_bucket.id
   s3_key            = aws_s3_object.lambda_package_zip.key
   s3_object_version = aws_s3_object.lambda_package_zip.version_id
 
-  handler = "lambdas/fn/index.handler"
+  handler = each.value.handler_path
   runtime = "nodejs22.x"
 
   environment {
@@ -40,94 +46,7 @@ resource "aws_lambda_function" "fn_lambda" {
   }
 }
 
-resource "aws_lambda_function" "fn1_lambda" {
-  function_name = "fn1-lambda-${var.environment}"
-  role          = aws_iam_role.lambda_exec_role.arn
-
-  s3_bucket         = aws_s3_bucket.lambda_bucket.id
-  s3_key            = aws_s3_object.lambda_package_zip.key
-  s3_object_version = aws_s3_object.lambda_package_zip.version_id
-
-  handler = "lambdas/fn1/index.handler"
-  runtime = "nodejs22.x"
-
-  environment {
-    variables = {
-      ENVIRONMENT = var.environment
-    }
-  }
-}
-
-resource "aws_lambda_function" "fn2_lambda" {
-  function_name = "fn2-lambda-${var.environment}"
-  role          = aws_iam_role.lambda_exec_role.arn
-
-  s3_bucket         = aws_s3_bucket.lambda_bucket.id
-  s3_key            = aws_s3_object.lambda_package_zip.key
-  s3_object_version = aws_s3_object.lambda_package_zip.version_id
-
-  handler = "lambdas/fn2/index.handler"
-  runtime = "nodejs22.x"
-
-  environment {
-    variables = {
-      ENVIRONMENT = var.environment
-    }
-  }
-}
-
-resource "aws_lambda_function" "fn3_lambda" {
-  function_name = "fn3-lambda-${var.environment}"
-  role          = aws_iam_role.lambda_exec_role.arn
-
-  s3_bucket         = aws_s3_bucket.lambda_bucket.id
-  s3_key            = aws_s3_object.lambda_package_zip.key
-  s3_object_version = aws_s3_object.lambda_package_zip.version_id
-
-  handler = "lambdas/fn3/index.handler"
-  runtime = "nodejs22.x"
-
-  environment {
-    variables = {
-      ENVIRONMENT = var.environment
-    }
-  }
-}
-
-resource "aws_lambda_function" "fnId_lambda" {
-  function_name = "fnId-lambda-${var.environment}"
-  role          = aws_iam_role.lambda_exec_role.arn
-
-  s3_bucket         = aws_s3_bucket.lambda_bucket.id
-  s3_key            = aws_s3_object.lambda_package_zip.key
-  s3_object_version = aws_s3_object.lambda_package_zip.version_id
-
-  handler = "lambdas/fnId/index.handler"
-  runtime = "nodejs22.x"
-
-  environment {
-    variables = {
-      ENVIRONMENT = var.environment
-    }
-  }
-}
-
-# --- Lambda Permissions ---
-
-locals {
-  # This creates a flat list of all endpoints, making it easy to loop over.
-  flat_endpoints = flatten([
-    for path, methods in local.api_endpoints : [
-      for method, config in methods : {
-        path          = path
-        method        = method
-        lambda_arn    = config.lambda_arn
-        function_name = config.function_name
-      }
-    ]
-  ])
-}
-
+# Lambda Permissions
 resource "aws_lambda_permission" "api_gateway_authorizer_permission" {
   statement_id  = "AllowAPIGatewayToInvokeAuthorizer"
   action        = "lambda:InvokeFunction"
@@ -137,14 +56,11 @@ resource "aws_lambda_permission" "api_gateway_authorizer_permission" {
 }
 
 resource "aws_lambda_permission" "api_gateway_endpoint_permissions" {
-  # Create a permission for each item in our flat_endpoints list.
-  for_each = {
-    for endpoint in local.flat_endpoints : "${upper(endpoint.method)}${endpoint.path}" => endpoint
-  }
+  for_each = local.endpoints
 
-  # statement_id  = "AllowAPIGatewayInvoke${replace(each.key, "/", "-")}"
+  # statement_id  = "AllowAPIGatewayInvoke${replace(each.value.api_path, "/", "_")}"
   action        = "lambda:InvokeFunction"
-  function_name = each.value.function_name
+  function_name = aws_lambda_function.lambdas[each.key].function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/${upper(each.value.method)}${each.value.path}"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/${each.value.api_method}${each.value.api_path}"
 }

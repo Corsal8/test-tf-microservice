@@ -1,43 +1,15 @@
 locals {
-  api_endpoints = {
-    "/fn" = {
-      "get" = {
-        lambda_arn    = aws_lambda_function.fn_lambda.invoke_arn
-        function_name = aws_lambda_function.fn_lambda.function_name
-      }
-    },
-    "/fn1" = {
-      "get" = {
-        lambda_arn    = aws_lambda_function.fn1_lambda.invoke_arn
-        function_name = aws_lambda_function.fn1_lambda.function_name
-      }
-    },
-    "/fn2" = {
-      "get" = {
-        lambda_arn    = aws_lambda_function.fn2_lambda.invoke_arn
-        function_name = aws_lambda_function.fn2_lambda.function_name
-      }
-    },
-    "/fn3" = {
-      "get" = {
-        lambda_arn    = aws_lambda_function.fn3_lambda.invoke_arn
-        function_name = aws_lambda_function.fn3_lambda.function_name
-      }
-    },
-    "/fn/{id}" = {
-      "get" = {
-        lambda_arn    = aws_lambda_function.fnId_lambda.invoke_arn
-        function_name = aws_lambda_function.fnId_lambda.function_name
-      }
-    }
-  }
-
+  # Generate the OpenAPI paths structure directly from the config in endpoints.tf
   openapi_paths = {
-    for path, methods in local.api_endpoints : path => {
-      for method, config in methods : lower(method) => {
-        summary = "Integration for ${path}"
+    # Find all unique API paths
+    for path in distinct([for e in values(local.endpoints) : e.api_path]) : path => {
+      # For each unique path, build a map of its methods
+      for key, endpoint in local.endpoints :
+      # The key is the lowercase method (e.g., "get"), and the value is the integration object
+      lower(endpoint.api_method) => {
+        summary = "Integration for ${endpoint.api_path}"
         x-amazon-apigateway-integration = {
-          uri                  = config.lambda_arn
+          uri                  = aws_lambda_function.lambdas[key].invoke_arn
           httpMethod           = "POST"
           type                 = "aws_proxy"
           payloadFormatVersion = "2.0"
@@ -45,19 +17,19 @@ locals {
         security = [{
           "authorizer" : []
         }]
-      }
+      } if endpoint.api_path == path # Only include endpoints that match the current path
     }
   }
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  name        = "Serverless-API-${var.environment}"
-  description = "Terraform microservice API"
+  name        = "Test-Terraform-Microservice-API-Gateway-${var.environment}"
+  description = "Test Terraform Microservice API Gateway for ${var.environment} environment"
 
   body = jsonencode({
     openapi = "3.0.1"
     info = {
-      title   = "Serverless-API-${var.environment}"
+      title   = "Test-Terraform-Microservice-API-Gateway-${var.environment}"
       version = "1.0"
     }
     paths = local.openapi_paths
@@ -81,6 +53,7 @@ resource "aws_api_gateway_rest_api" "api" {
   })
 }
 
+# API Gateway Authorizer IAM Role
 resource "aws_iam_role" "api_gateway_authorizer_role" {
   name = "api_gateway_authorizer_role-${var.environment}"
 

@@ -1,5 +1,11 @@
 locals {
   api_endpoints = {
+    "/fn" = {
+      "get" = {
+        lambda_arn    = aws_lambda_function.fn_lambda.invoke_arn
+        function_name = aws_lambda_function.fn_lambda.function_name
+      }
+    },
     "/fn1" = {
       "get" = {
         lambda_arn    = aws_lambda_function.fn1_lambda.invoke_arn
@@ -16,6 +22,12 @@ locals {
       "get" = {
         lambda_arn    = aws_lambda_function.fn3_lambda.invoke_arn
         function_name = aws_lambda_function.fn3_lambda.function_name
+      }
+    },
+    "/fn/{id}" = {
+      "get" = {
+        lambda_arn    = aws_lambda_function.fnId_lambda.invoke_arn
+        function_name = aws_lambda_function.fnId_lambda.function_name
       }
     }
   }
@@ -59,7 +71,7 @@ resource "aws_api_gateway_rest_api" "api" {
           x-amazon-apigateway-authorizer = {
             type                         = "request"
             authorizerUri                = aws_lambda_function.authorizer_lambda.invoke_arn
-            identitySource               = "context.httpMethod, context.resourcePath, method.request.header.Authorization"
+            identitySource               = "context.httpMethod, context.path, method.request.header.Authorization"
             authorizerResultTtlInSeconds = 300
             authorizerCredentials        = aws_iam_role.api_gateway_authorizer_role.arn
           }

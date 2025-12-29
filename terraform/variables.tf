@@ -10,3 +10,8 @@ variable "environment" {
   default     = "develop"
 }
 
+variable "project_name" {
+  description = "A unique name for the project."
+  type        = string
+  default     = "test-terraform-microservice"
+}

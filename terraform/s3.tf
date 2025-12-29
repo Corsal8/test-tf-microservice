@@ -1,11 +1,6 @@
 
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "test-terraform-microservice-lambda-code-${var.environment}"
-
-  tags = {
-    Name        = "Lambda Code Storage"
-    Environment = "${var.environment}"
-  }
+  bucket = "${var.project_name}-${var.environment}-lambda-code"
 }
 
 resource "aws_s3_bucket_ownership_controls" "lambda_bucket_ownership" {

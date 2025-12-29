@@ -8,7 +8,7 @@ data "archive_file" "lambda_package_zip" {
 
 # Authorizer Lambda
 resource "aws_lambda_function" "authorizer_lambda" {
-  function_name = "authorizer-lambda-${var.environment}"
+  function_name = "${var.project_name}-${var.environment}-authorizer-lambda"
   role          = aws_iam_role.lambda_exec_role.arn
 
   s3_bucket         = aws_s3_bucket.lambda_bucket.id
@@ -29,7 +29,7 @@ resource "aws_lambda_function" "authorizer_lambda" {
 resource "aws_lambda_function" "lambdas" {
   for_each = local.endpoints
 
-  function_name = "${each.key}-lambda-${var.environment}"
+  function_name = "${var.project_name}-${var.environment}-${each.key}-lambda"
   role          = aws_iam_role.lambda_exec_role.arn
 
   s3_bucket         = aws_s3_bucket.lambda_bucket.id

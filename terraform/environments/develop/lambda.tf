@@ -2,7 +2,7 @@
 # Similarly to Serverless Framework, we package all Lambda functions into a single ZIP file.
 data "archive_file" "lambda_package_zip" {
   type        = "zip"
-  source_dir  = "../dist"
+  source_dir  = "../../../dist"
   output_path = "${path.module}/lambda-packages/lambda-package.zip"
 }
 

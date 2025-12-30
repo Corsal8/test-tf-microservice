@@ -11,31 +11,6 @@
       "remoteRoot": "/var/task",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "skipFiles": ["<node_internals>/**/*.js", "**/node_modules/**/*.js"]
-    },
-    {
-      "type": "aws-sam",
-      "request": "direct-invoke",
-      "name": "Invoke Lambda",
-      "invokeTarget": {
-        "target": "template",
-        "templatePath": "${workspaceFolder}/template.yaml",
-        "logicalId": "ServerFunction"
-      },
-      "lambda": {
-        "payload": {
-          "json": {}
-        }
-      },
-      "sam": {
-        "dockerNetwork": "local-dev_local-dev-net"
-      }
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Debug SAM API (Automated)",
-      "configurations": ["Attach to SAM CLI"],
-      "preLaunchTask": "Start SAM API for Debugging"
     }
   ]
 }

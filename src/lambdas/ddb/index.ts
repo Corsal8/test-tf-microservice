@@ -4,14 +4,10 @@ import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
 const environment = process.env.ENVIRONMENT || "develop";
 
-// Create a DynamoDB client configured for local Docker
 const client = new DynamoDBClient({
   region: process.env.AWS_REGION,
-  endpoint: environment === "local" ? "http://dynamodb-local:8000" : undefined,
-  // credentials: {
-  //   accessKeyId: "dummy", // Dummy credentials for local DynamoDB
-  //   secretAccessKey: "dummy", // Dummy credentials for local DynamoDB
-  // },
+  // DYNAMODB_ENDPOINT only on local environment. In live servers, the SDK uses the default endpoint.
+  endpoint: process.env.DYNAMODB_ENDPOINT,
 });
 const docClient = DynamoDBDocumentClient.from(client);
 

@@ -3,6 +3,13 @@ locals {
   endpoint_lambda_names = {
     for k, v in local.endpoints : k => "${var.project_name}-${var.environment}-${k}-lambda"
   }
+
+  env_variables = {
+    PROJECT_NAME         = var.project_name,
+    ENVIRONMENT          = var.environment,
+    DYNAMODB_TABLE_NAME  = var.dynamodb_table_name,
+    DB_CONNECTION_STRING = var.db_connection_string
+  }
 }
 
 # Lambda Package Archive
@@ -26,9 +33,7 @@ resource "aws_lambda_function" "authorizer_lambda" {
   runtime = "nodejs22.x"
 
   environment {
-    variables = {
-      ENVIRONMENT = var.environment
-    }
+    variables = local.env_variables
   }
 }
 
@@ -52,9 +57,7 @@ resource "aws_lambda_function" "lambdas" {
   runtime = "nodejs22.x"
 
   environment {
-    variables = {
-      ENVIRONMENT = var.environment
-    }
+    variables = local.env_variables
   }
 }
 

@@ -2,23 +2,26 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
+const environment = process.env.ENVIRONMENT || "develop";
+
 // Create a DynamoDB client configured for local Docker
 const client = new DynamoDBClient({
-  region: "localhost", // Can be any value for local, but needed
-  endpoint: "http://dynamodb-local:8000",
-  credentials: {
-    accessKeyId: "dummy", // Dummy credentials for local DynamoDB
-    secretAccessKey: "dummy", // Dummy credentials for local DynamoDB
-  },
+  region: process.env.AWS_REGION,
+  endpoint: environment === "local" ? "http://dynamodb-local:8000" : undefined,
+  // credentials: {
+  //   accessKeyId: "dummy", // Dummy credentials for local DynamoDB
+  //   secretAccessKey: "dummy", // Dummy credentials for local DynamoDB
+  // },
 });
 const docClient = DynamoDBDocumentClient.from(client);
 
-const TABLE_NAME = "Environments";
+const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
 
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  console.log("EVENT", JSON.stringify(event));
+  console.log("EVENT: ", JSON.stringify(event));
+  console.log("ENVIRONMENT: ", environment);
 
   // Get the ID from the path parameters
   const id = event.pathParameters?.id || "test";

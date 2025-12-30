@@ -21,3 +21,17 @@ variable "log_retention_days" {
   type        = number
   default     = 30
 }
+
+variable "dynamodb_table_name" {
+  description = "DynamoDB table name."
+  type        = string
+  default     = "Environments"
+}
+
+
+variable "db_connection_string" {
+  description = "DB Connection String."
+  type        = string
+  default     = "fakeConnectionString"
+}
+

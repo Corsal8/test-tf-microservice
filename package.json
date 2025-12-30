@@ -6,6 +6,7 @@
   "scripts": {
     "docker:up": "docker compose -f local-dev/docker-compose.yml up -d",
     "docker:down": "docker compose -f local-dev/docker-compose.yml down",
+    "prisma:generate": "prisma generate",
     "build": "node build.js",
     "build:watch": "nodemon --watch src/ --ext ts --exec \"npm run build\"",
     "sam:start": "sam local start-api --docker-network local-dev_local-dev-net --parameter-overrides EnableAuthorizer=true",

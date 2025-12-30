@@ -17,6 +17,11 @@ locals {
       handler_path = "lambdas/ddb/index.handler"
       api_method   = "GET"
       api_path     = "/ddb/{id}"
+    },
+    "db" = {
+      handler_path = "lambdas/db/index.handler"
+      api_method   = "POST"
+      api_path     = "/db"
     }
   }
 }

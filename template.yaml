@@ -1,3 +1,9 @@
+# WARNING: This template is used just for debugging purposes.
+# It allows to run the lambda function locally using the AWS SAM CLI.
+# Since this template is manually maintained and it is not derived from the
+# Terraform definition, there are no guarantees that this infra matches the
+# one defined by Terraform.
+
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Terraform microservice
@@ -65,8 +71,3 @@ Resources:
               - IsAuthorizerEnabled
               - Authorizer: CustomAuthorizer
               - Authorizer: NONE
-
-Outputs:
-  ApiUrl:
-    Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${MicroserviceApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

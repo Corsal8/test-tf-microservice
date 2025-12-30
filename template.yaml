@@ -5,6 +5,9 @@ Description: Terraform microservice
 Globals:
   Function:
     Timeout: 29
+    Environment:
+      Variables:
+        NODE_OPTIONS: --inspect-brk=0.0.0.0:5858
 
 Resources:
   MicroserviceApiGateway:

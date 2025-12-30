@@ -2,6 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "pwa-node",
+      "request": "attach",
+      "name": "Attach to SAM CLI",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceFolder}/dist",
+      "remoteRoot": "/var/task",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**/*.js",
+        "**/node_modules/**/*.js"
+      ]
+    },
+    {
       "type": "aws-sam",
       "request": "direct-invoke",
       "name": "Invoke Lambda",

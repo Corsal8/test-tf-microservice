@@ -38,6 +38,11 @@ resource "aws_lambda_function" "authorizer_lambda" {
   environment {
     variables = local.env_variables
   }
+
+  vpc_config {
+    subnet_ids         = var.vpc_config.subnet_ids
+    security_group_ids = var.vpc_config.security_group_ids
+  }
 }
 
 resource "aws_cloudwatch_log_group" "authorizer_lambda_log_group" {
@@ -61,6 +66,11 @@ resource "aws_lambda_function" "lambdas" {
 
   environment {
     variables = local.env_variables
+  }
+
+  vpc_config {
+    subnet_ids         = var.vpc_config.subnet_ids
+    security_group_ids = var.vpc_config.security_group_ids
   }
 }
 

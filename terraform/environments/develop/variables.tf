@@ -7,6 +7,14 @@ variable "env_config" {
   })
 }
 
+variable "vpc_config" {
+  description = "VPC configuration for Lambda"
+  type = object({
+    subnet_ids         = optional(list(string), [])
+    security_group_ids = optional(list(string), [])
+  })
+}
+
 variable "dynamodb_config" {
   description = "DynamoDB config"
   type = object({

@@ -13,7 +13,7 @@ Resources:
       StageName: Prod
       Auth:
         Authorizers:
-          MyLambdaTokenAuthorizer:
+          CustomAuthorizer:
             FunctionArn: !GetAtt AuthorizerFunction.Arn
             Identity:
               Header: Authorization
@@ -31,7 +31,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./dist
-      Handler: lambdas/server/index.handler
+      Handler: lambdas/ddb/index.handler
       Runtime: nodejs22.x
       Architectures:
         - x86_64
@@ -43,7 +43,7 @@ Resources:
             Path: /
             Method: ANY
             Auth:
-              Authorizer: MyLambdaTokenAuthorizer
+              Authorizer: CustomAuthorizer
 
 Outputs:
   ApiUrl:

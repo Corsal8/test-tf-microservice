@@ -4,12 +4,12 @@
   "description": "This project realize a microservice with the following infrastructure.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist",
     "build": "node build.js",
     "docker:up": "docker compose -f local-dev/docker-compose.yml up -d",
     "docker:down": "docker compose -f local-dev/docker-compose.yml down",
     "sam:local:start": "sam local start-api --docker-network local-dev_local-dev-net",
+    "debug": "npm run build && sam local start-api -d 5858",
     "build:watch": "nodemon --watch src/ --ext ts --exec \"npm run build\"",
     "local:start": "npm run docker:up && npm run build && npm run sam:local:start",
     "local:start:watch": "concurrently \"npm run local:start\" \"npm run build:watch\""
@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.943.0",
+    "@aws-sdk/lib-dynamodb": "^3.958.0",
     "@prisma/client": "^7.1.0",
     "axios": "^1.13.2"
   }

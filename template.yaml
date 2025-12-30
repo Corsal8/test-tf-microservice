@@ -2,6 +2,17 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Terraform microservice
 
+Parameters:
+  EnableAuthorizer:
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+
+Conditions:
+  IsAuthorizerEnabled: !Equals [!Ref EnableAuthorizer, "true"]
+
 Globals:
   Function:
     Timeout: 29
@@ -20,6 +31,7 @@ Resources:
             FunctionArn: !GetAtt AuthorizerFunction.Arn
             Identity:
               Header: Authorization
+        DefaultAuthorizer: NONE
 
   AuthorizerFunction:
     Type: AWS::Serverless::Function
@@ -45,8 +57,10 @@ Resources:
             RestApiId: !Ref MicroserviceApiGateway
             Path: /
             Method: ANY
-            Auth:
-              Authorizer: CustomAuthorizer
+            Auth: !If
+              - IsAuthorizerEnabled
+              - Authorizer: CustomAuthorizer
+              - Authorizer: NONE
 
 Outputs:
   ApiUrl:

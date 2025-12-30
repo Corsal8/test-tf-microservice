@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start SAM API for Debugging",
+      "type": "shell",
+      "command": "npm run debug:start:watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "Debugger listening on ws"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.",
+          "endsPattern": "Debugger listening on ws"
+        }
+      }
+    }
+  ]
+}

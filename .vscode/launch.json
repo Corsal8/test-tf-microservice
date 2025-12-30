@@ -9,13 +9,8 @@
       "port": 5858,
       "localRoot": "${workspaceFolder}/dist",
       "remoteRoot": "/var/task",
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**/*.js",
-        "**/node_modules/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**/*.js", "**/node_modules/**/*.js"]
     },
     {
       "type": "aws-sam",
@@ -34,6 +29,13 @@
       "sam": {
         "dockerNetwork": "local-dev_local-dev-net"
       }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug SAM API (Automated)",
+      "configurations": ["Attach to SAM CLI"],
+      "preLaunchTask": "Start SAM API for Debugging"
     }
   ]
 }

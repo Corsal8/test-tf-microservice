@@ -9,10 +9,11 @@
     "docker:up": "docker compose -f local-dev/docker-compose.yml up -d",
     "docker:down": "docker compose -f local-dev/docker-compose.yml down",
     "sam:local:start": "sam local start-api --docker-network local-dev_local-dev-net",
-    "debug": "npm run build && sam local start-api -d 5858 --docker-network local-dev_local-dev-net",
     "build:watch": "nodemon --watch src/ --ext ts --exec \"npm run build\"",
     "local:start": "npm run docker:up && npm run build && npm run sam:local:start",
-    "local:start:watch": "concurrently \"npm run local:start\" \"npm run build:watch\""
+    "local:start:watch": "concurrently \"npm run local:start\" \"npm run build:watch\"",
+    "debug:start": "npm run docker:up && sam local start-api -d 5858 --docker-network local-dev_local-dev-net --parameter-overrides EnableAuthorizer=false",
+    "debug:start:watch": "concurrently \"npm run debug:start\" \"npm run build:watch\""
   },
   "keywords": [],
   "author": "",

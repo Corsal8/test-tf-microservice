@@ -1,14 +1,17 @@
 locals {
-  authorizer_lambda_name = "${var.project_name}-${var.environment}-authorizer-lambda"
+  authorizer_lambda_name = "${var.env_config.project_name}-${var.env_config.env_name}-authorizer-lambda"
   endpoint_lambda_names = {
-    for k, v in local.endpoints : k => "${var.project_name}-${var.environment}-${k}-lambda"
+    for k, v in local.endpoints : k => "${var.env_config.project_name}-${var.env_config.env_name}-${k}-lambda"
   }
 
   env_variables = {
-    PROJECT_NAME         = var.project_name,
-    ENVIRONMENT          = var.environment,
-    DYNAMODB_TABLE_NAME  = var.dynamodb_table_name,
-    DB_CONNECTION_STRING = var.db_connection_string
+    PROJECT_NAME        = var.env_config.project_name,
+    ENVIRONMENT         = var.env_config.env_name,
+    DYNAMODB_TABLE_NAME = var.dynamodb_config.table_name,
+    DB_USER             = var.sql_server_config.db_user,
+    DB_PASSWORD         = var.sql_server_config.db_password,
+    DB_NAME             = var.sql_server_config.db_name,
+    HOST                = var.sql_server_config.db_host,
   }
 }
 
@@ -39,7 +42,7 @@ resource "aws_lambda_function" "authorizer_lambda" {
 
 resource "aws_cloudwatch_log_group" "authorizer_lambda_log_group" {
   name              = "/aws/lambda/${local.authorizer_lambda_name}"
-  retention_in_days = var.log_retention_days
+  retention_in_days = var.lambda_config.log_retention_days
 }
 
 # Endpoint Lambdas
@@ -65,7 +68,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_groups" {
   for_each = local.endpoints
 
   name              = "/aws/lambda/${local.endpoint_lambda_names[each.key]}"
-  retention_in_days = var.log_retention_days
+  retention_in_days = var.lambda_config.log_retention_days
 }
 
 

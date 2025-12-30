@@ -1,6 +1,6 @@
 
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "${var.project_name}-${var.environment}-lambda-code"
+  bucket = "${var.env_config.project_name}-${var.env_config.env_name}-lambda-code"
 }
 
 resource "aws_s3_bucket_ownership_controls" "lambda_bucket_ownership" {

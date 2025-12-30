@@ -1,37 +1,33 @@
-variable "aws_region" {
-  description = "The AWS region to deploy the infrastructure to."
-  type        = string
-  default     = "eu-west-1"
+variable "env_config" {
+  description = "Environment configuration"
+  type = object({
+    aws_region   = string
+    project_name = string
+    env_name     = string
+  })
 }
 
-variable "project_name" {
-  description = "A unique name for the project."
-  type        = string
-  default     = "test-tf-microservice"
+variable "dynamodb_config" {
+  description = "DynamoDB config"
+  type = object({
+    table_name = optional(string, "Environments")
+  })
 }
 
-variable "environment" {
-  description = "The deployment environment (e.g., develop, staging, production)."
-  type        = string
-  default     = "develop"
+variable "sql_server_config" {
+  description = "SQL Server config"
+  type = object({
+    db_host     = string
+    db_user     = optional(string, "sa")
+    db_password = optional(string, "Password1234")
+    db_name     = optional(string, "db")
+  })
 }
 
-variable "log_retention_days" {
-  description = "The number of days to retain cloudwatch logs."
-  type        = number
-  default     = 30
+variable "lambda_config" {
+  description = "Lambda config"
+  type = object({
+    # memory_size_mb     = optional(number, 128)
+    log_retention_days = optional(number, 30)
+  })
 }
-
-variable "dynamodb_table_name" {
-  description = "DynamoDB table name."
-  type        = string
-  default     = "Environments"
-}
-
-
-variable "db_connection_string" {
-  description = "DB Connection String."
-  type        = string
-  default     = "fakeConnectionString"
-}
-

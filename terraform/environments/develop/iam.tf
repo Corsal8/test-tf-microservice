@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "lambda_exec_role" {
-  name = "${var.project_name}-${var.environment}-lambda-exec-role"
+  name = "${var.env_config.project_name}-${var.env_config.env_name}-lambda-exec-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -23,7 +23,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 }
 
 resource "aws_iam_role_policy" "lambda_dynamodb_read_policy" {
-  name = "${var.project_name}-${var.environment}-lambda-dynamodb-read-policy"
+  name = "${var.env_config.project_name}-${var.env_config.env_name}-lambda-dynamodb-read-policy"
   role = aws_iam_role.lambda_exec_role.id
 
   policy = jsonencode({
@@ -37,7 +37,7 @@ resource "aws_iam_role_policy" "lambda_dynamodb_read_policy" {
           "dynamodb:Scan",
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}"
+        Resource = "arn:aws:dynamodb:${var.env_config.aws_region}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_config.table_name}"
       },
     ]
   })

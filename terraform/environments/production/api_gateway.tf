@@ -23,13 +23,13 @@ locals {
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  name        = "${var.project_name}-${var.environment}-api"
-  description = "Test Terraform Microservice API Gateway for ${var.environment} environment"
+  name        = "${var.env_config.project_name}-${var.env_config.env_name}-api"
+  description = "Test Terraform Microservice API Gateway for ${var.env_config.env_name} environment"
 
   body = jsonencode({
     openapi = "3.0.1"
     info = {
-      title   = "${var.project_name}-${var.environment}-api"
+      title   = "${var.env_config.project_name}-${var.env_config.env_name}-api"
       version = "1.0"
     }
     paths = local.openapi_paths
@@ -55,7 +55,7 @@ resource "aws_api_gateway_rest_api" "api" {
 
 # API Gateway Authorizer IAM Role
 resource "aws_iam_role" "api_gateway_authorizer_role" {
-  name = "${var.project_name}-${var.environment}-api-gateway-authorizer-role"
+  name = "${var.env_config.project_name}-${var.env_config.env_name}-api-gateway-authorizer-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -72,7 +72,7 @@ resource "aws_iam_role" "api_gateway_authorizer_role" {
 }
 
 resource "aws_iam_role_policy" "api_gateway_authorizer_policy" {
-  name = "${var.project_name}-${var.environment}-api-gateway-authorizer-policy"
+  name = "${var.env_config.project_name}-${var.env_config.env_name}-api-gateway-authorizer-policy"
   role = aws_iam_role.api_gateway_authorizer_role.id
 
   policy = jsonencode({
@@ -103,5 +103,5 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 resource "aws_api_gateway_stage" "stage" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = var.environment
+  stage_name    = var.env_config.env_name
 }

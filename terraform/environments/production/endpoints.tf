@@ -8,25 +8,20 @@ locals {
       api_method   = "GET"
       api_path     = "/fn"
     },
-    "fn1" = {
-      handler_path = "lambdas/fn1/index.handler"
-      api_method   = "GET"
-      api_path     = "/fn1"
-    },
-    "fn2" = {
-      handler_path = "lambdas/fn2/index.handler"
-      api_method   = "GET"
-      api_path     = "/fn2"
-    },
-    "fn3" = {
-      handler_path = "lambdas/fn3/index.handler"
-      api_method   = "GET"
-      api_path     = "/fn3"
-    },
     "fnId" = {
       handler_path = "lambdas/fnId/index.handler"
       api_method   = "GET"
       api_path     = "/fn/{id}"
+    },
+    "ddb" = {
+      handler_path = "lambdas/ddb/index.handler"
+      api_method   = "GET"
+      api_path     = "/ddb/{id}"
+    },
+    "db" = {
+      handler_path = "lambdas/db/index.handler"
+      api_method   = "POST"
+      api_path     = "/db"
     }
   }
 }

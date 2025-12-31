@@ -21,7 +21,7 @@ Conditions:
 
 Globals:
   Function:
-    Timeout: 29
+    Timeout: 900
     Environment:
       Variables:
         ENVIRONMENT: "local"

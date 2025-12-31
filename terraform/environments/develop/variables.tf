@@ -37,5 +37,6 @@ variable "lambda_config" {
   type = object({
     # memory_size_mb     = optional(number, 128)
     log_retention_days = optional(number, 30)
+    timeout_seconds    = optional(number, 15)
   })
 }

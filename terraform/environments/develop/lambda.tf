@@ -27,6 +27,7 @@ data "archive_file" "lambda_package_zip" {
 resource "aws_lambda_function" "authorizer_lambda" {
   function_name = local.authorizer_lambda_name
   role          = aws_iam_role.lambda_exec_role.arn
+  timeout       = var.lambda_config.timeout_seconds
 
   s3_bucket         = aws_s3_bucket.lambda_bucket.id
   s3_key            = aws_s3_object.lambda_package_zip.key
@@ -56,6 +57,7 @@ resource "aws_lambda_function" "lambdas" {
 
   function_name = local.endpoint_lambda_names[each.key]
   role          = aws_iam_role.lambda_exec_role.arn
+  timeout       = var.lambda_config.timeout_seconds
 
   s3_bucket         = aws_s3_bucket.lambda_bucket.id
   s3_key            = aws_s3_object.lambda_package_zip.key

@@ -22,4 +22,5 @@ sql_server_config = {
 
 lambda_config = {
   log_retention_days = 30
+  timeout_seconds    = 15
 }

@@ -71,6 +71,11 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Debug Environment Variable
+        run: |
+          echo "Value of TF_VAR_sql_server_config:"
+          echo "$TF_VAR_sql_server_config"
+
       - name: Terraform Plan
         if: github.event.inputs.command == 'plan'
         run: terraform plan

@@ -3,6 +3,8 @@ import { PrismaClient } from "../generated/prisma/client";
 // @ts-expect-error this file is bundled as a binary.
 import pemFile from "./eu-west-1-bundle.pem";
 
+console.log("Before creating SQL config");
+
 const sqlConfig = {
   user: process.env.DB_USER!,
   password: process.env.DB_PASSWORD!,
@@ -22,7 +24,10 @@ const sqlConfig = {
   },
 };
 
+console.log("SQL config created");
 const adapter = new PrismaMssql(sqlConfig);
+console.log("Prisma MSSQL adapter created");
 const prisma = new PrismaClient({ adapter });
+console.log("Prisma Client created");
 
 export { prisma };

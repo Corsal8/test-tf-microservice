@@ -1,5 +1,7 @@
 import { PrismaMssql } from "@prisma/adapter-mssql";
 import { PrismaClient } from "../generated/prisma/client";
+// @ts-expect-error this file is bundled as a binary.
+import pemFile from "./eu-west-1-bundle.pem";
 
 const sqlConfig = {
   user: process.env.DB_USER!,
@@ -14,6 +16,9 @@ const sqlConfig = {
   options: {
     encrypt: true,
     trustServerCertificate: process.env.ENVIRONMENT === "local",
+    cryptoCredentialsDetails: {
+      ca: Buffer.from(pemFile),
+    },
   },
 };
 

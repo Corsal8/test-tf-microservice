@@ -11,7 +11,7 @@ locals {
     DB_USER             = var.sql_server_config.db_user,
     DB_PASSWORD         = var.sql_server_config.db_password,
     DB_NAME             = var.sql_server_config.db_name,
-    HOST                = var.sql_server_config.db_host,
+    DB_HOST             = var.sql_server_config.db_host,
   }
 }
 

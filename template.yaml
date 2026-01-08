@@ -93,3 +93,23 @@ Resources:
               - IsAuthorizerEnabled
               - Authorizer: CustomAuthorizer
               - Authorizer: NONE
+
+  DbBurnFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./dist
+      Handler: lambdas/burn/index.handler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MicroserviceApiGateway
+            Path: /db/burn
+            Method: POST
+            Auth: !If
+              - IsAuthorizerEnabled
+              - Authorizer: CustomAuthorizer
+              - Authorizer: NONE
